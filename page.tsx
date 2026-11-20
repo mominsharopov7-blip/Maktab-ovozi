@@ -1,0 +1,9 @@
+'use client';
+import { useState } from 'react';
+import { supabase } from '@/lib/supabase';
+export default function Login(){
+ const [email,setEmail]=useState(''); const [password,setPassword]=useState(''); const [message,setMessage]=useState(''); const [busy,setBusy]=useState(false);
+ async function submit(e:React.FormEvent){e.preventDefault(); if(!supabase){setMessage('Avval Supabase sozlamalarini .env.local fayliga kiriting.');return;} setBusy(true);setMessage(''); const {error}=await supabase.auth.signInWithPassword({email,password}); setBusy(false);setMessage(error?.message||'Muvaffaqiyatli kirdingiz.'); if(!error) window.location.href='/dashboard';}
+ async function signup(){if(!supabase){setMessage('Avval Supabase sozlamalarini kiriting.');return;}setBusy(true);const {error}=await supabase.auth.signUp({email,password});setBusy(false);setMessage(error?.message||'Tasdiqlash havolasi emailingizga yuborildi. Emailni tasdiqlang.');}
+ return <main className="auth"><a href="/" className="back">← Bosh sahifa</a><form className="auth-card" onSubmit={submit}><div className="mark">MO</div><div className="eyebrow">MAKTAB OVOZI PLATFORMASI</div><h1>Shaxsiy kabinet</h1><p>Ijodiy ish yuborish va media jamoangizni boshqarish uchun kiring.</p><label>Email manzil<input type="email" required value={email} onChange={e=>setEmail(e.target.value)} placeholder="name@example.com"/></label><label>Parol<input type="password" required minLength={6} value={password} onChange={e=>setPassword(e.target.value)} placeholder="Kamida 6 belgi"/></label><button className="primary full" disabled={busy}>{busy?'Kutilmoqda…':'Kirish'}</button><button type="button" className="secondary full" onClick={signup} disabled={busy}>Yangi hisob yaratish</button>{message&&<div className="notice">{message}</div>}</form></main>
+}
